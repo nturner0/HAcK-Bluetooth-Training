@@ -1,0 +1,41 @@
+#include "BluetoothSerial.h"
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+BluetoothSerial SerialBT;
+
+#define LED 32
+#define BUTTON 14
+
+void setup() {
+  pinMode(LED, OUTPUT);
+  pinMode(BUTTON, INPUT);
+
+  Serial.begin(115200);
+  SerialBT.begin("ESP32");
+  Serial.println("Started successfully.");
+
+  digitalWrite(LED, LOW);
+}
+
+char readIn;
+
+void loop() {
+  
+  if (SerialBT.available())
+    readIn = char(SerialBT.read());
+
+  if (readIn == 'w')
+    digitalWrite(LED, HIGH);
+  else if (readIn == 's')
+    digitalWrite(LED, LOW);
+
+  if(digitalRead(BUTTON) == HIGH)
+    SerialBT.println("ON!");
+  else
+    SerialBT.println("OFF!");
+  delay(20);
+}
+
