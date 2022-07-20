@@ -1,0 +1,51 @@
+import processing.serial.*;  //imports library used for wireless comm with the HC-05
+Serial myPort;               // declares Serial Port object from library
+String Text = "Nothing";
+
+void setup()
+{
+ size(900,1000);                         // create window of this size
+ myPort=new Serial(this, "COM3", 115200);  //my port was COM6 but yours may be different, recall when you connected it to your computer
+ myPort.bufferUntil('\n');               //delays calling serialEvent unitl reaching '\n'
+}
+
+void serialEvent(Serial myPort){        //serialEvent is called whenever data is available
+  Text = myPort.readStringUntil('\n');   //reads Serial.println() from Arduino
+}
+
+int state = 0;
+int x = 0;
+void draw()
+{
+
+  background(237,240,241);        // sets background to a color, parameters correspond to an RGB code
+  fill(20,160,133);               // sets color we will use to fill shapes
+  stroke(33);                     // sets color used for border around shapes
+  strokeWeight(1);                // sets width of stroke when drawing shapes
+  
+  rect(x,700,50,50,10);
+  x+=1;
+  if (x == 800)
+    x=0;
+  
+  fill(0);
+  textSize(32);
+  text(Text, 400, 700);  
+    
+  if (state == 1) {
+    myPort.write('w');
+    state = 0;
+  } else if (state == 2) {
+    myPort.write('s');
+    state = 0;
+  }
+  
+}
+
+void keyPressed() {
+  if(key == 'w')
+    state = 1;
+  else if (key == 's')
+    state = 2;
+}
+
