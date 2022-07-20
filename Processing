@@ -1,11 +1,11 @@
 import processing.serial.*;  //imports library used for wireless comm with the HC-05
 Serial myPort;               // declares Serial Port object from library
-String Text = "Nothing";
+String Text;
 
 void setup()
 {
  size(900,1000);                         // create window of this size
- myPort=new Serial(this, "COM3", 115200);  //my port was COM6 but yours may be different, recall when you connected it to your computer
+ myPort=new Serial(this, "COM3", 115200);  //COM port will likely be different, try different ones until it works (usually one of COM3-COM7)
  myPort.bufferUntil('\n');               //delays calling serialEvent unitl reaching '\n'
 }
 
@@ -23,17 +23,17 @@ void draw()
   stroke(33);                     // sets color used for border around shapes
   strokeWeight(1);                // sets width of stroke when drawing shapes
   
-  rect(x,700,50,50,10);
+  rect(x,700,50,50,10);           //creates a rectangle at x,y with size width,height
   x+=1;
   if (x == 800)
     x=0;
   
   fill(0);
   textSize(32);
-  text(Text, 400, 700);  
+  text(Text, 400, 700);           //draws text at x,y
     
   if (state == 1) {
-    myPort.write('w');
+    myPort.write('w');            //writes to the Bluetooth Serial port
     state = 0;
   } else if (state == 2) {
     myPort.write('s');
@@ -42,7 +42,7 @@ void draw()
   
 }
 
-void keyPressed() {
+void keyPressed() {               //called whenever a key is pressed, key is automatically set to the key that is pressed
   if(key == 'w')
     state = 1;
   else if (key == 's')
